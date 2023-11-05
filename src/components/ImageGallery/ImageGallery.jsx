@@ -73,16 +73,6 @@ export const ImageGallery = props => {
             });
           }}
         />
-        // <button
-        //   type="button"
-        //   onClick={() => {
-        //     setPage(prevPage => {
-        //       return prevPage + 1;
-        //     });
-        //   }}
-        // >
-        //   Load more
-        // </button>
       )}
     </div>
   );

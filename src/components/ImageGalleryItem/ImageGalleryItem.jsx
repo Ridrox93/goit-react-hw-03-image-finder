@@ -14,6 +14,7 @@ export const ImageGalleryItem = props => {
       {({ ref, open }) => (
         <li className={css.ImageGalleryItem}>
           <img
+            alt={props.image.tags}
             className={css.ImageGalleryItemImage}
             ref={ref}
             onClick={open}
