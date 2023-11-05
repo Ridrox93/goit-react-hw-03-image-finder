@@ -6,17 +6,30 @@ export class App extends Component {
   state = {
     searchPhoto: '',
     isImagesLoading: false,
+    images: [],
+    showLoadMore: false,
   };
 
-  handleFormSubmit = searchPhoto => {
-    this.setState({ searchPhoto });
-    if (searchPhoto) {
-      this.setState({ isImagesLoading: true });
-    }
+  handleFormSubmit = newSearchPhoto => {
+    if (!newSearchPhoto) return;
+    if (newSearchPhoto === this.state.searchPhoto) return;
+    this.setState({
+      searchPhoto: newSearchPhoto,
+      images: [],
+      showLoadMore: false,
+    });
   };
 
-  handleLoadingStatus = () => {
-    this.setState({ isImagesLoading: false });
+  handleLoadingStatus = status => {
+    this.setState({ isImagesLoading: status });
+  };
+
+  handlImagesAdding = newImages => {
+    this.setState({ images: [...this.state.images, ...newImages] });
+  };
+
+  handlShowLoadMore = show => {
+    this.setState({ showLoadMore: show });
   };
 
   render() {
@@ -24,6 +37,10 @@ export class App extends Component {
       <div>
         <Searchbar onSubmit={this.handleFormSubmit} />
         <ImageGallery
+          showLoadMore={this.state.showLoadMore}
+          handlShowLoadMore={this.handlShowLoadMore}
+          handlImagesAdding={this.handlImagesAdding}
+          images={this.state.images}
           searchPhoto={this.state.searchPhoto}
           onImagesLoad={this.handleLoadingStatus}
           isImagesLoading={this.state.isImagesLoading}

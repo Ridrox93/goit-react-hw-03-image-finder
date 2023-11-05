@@ -15,6 +15,7 @@ export class Searchbar extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
+
     if (this.state.searchPhoto.trim() === '') {
       alert('Query something, please!');
       return;
