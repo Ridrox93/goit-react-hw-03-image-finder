@@ -26,7 +26,10 @@ export const ImageGallery = ({
 
   useEffect(() => {
     if (!searchPhoto) return;
-    handleImagesLoad(true);
+
+    if (!images.length) {
+      handleImagesLoad(true);
+    }
     getImages(searchPhoto, page)
       .then(response => {
         if (response.hits.length < 12) {
@@ -48,6 +51,7 @@ export const ImageGallery = ({
       .finally(() => {
         handleImagesLoad(false);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchPhoto, page, handleImagesLoad, addNewImages, setLoadMoreStatus]);
 
   if (isImagesLoading) {
