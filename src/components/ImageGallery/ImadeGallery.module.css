@@ -1,0 +1,39 @@
+.container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+
+}
+
+
+.gallery {
+    display: grid;
+    max-width: calc(100vw - 48px);
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-gap: 16px;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+    list-style: none;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+
+}
+
+.info {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+    align-items: center;
+
+    font-size: 30px;
+    font-weight: 800;
+
+}
+
+.infoText {
+    padding-left: 10px;
+}
