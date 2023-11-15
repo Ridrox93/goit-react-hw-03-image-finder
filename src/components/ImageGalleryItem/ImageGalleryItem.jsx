@@ -1,27 +1,38 @@
+import { ModalCustom } from 'components/ModalCustom/ModalCustom';
 import css from './ImageGalleryItem.module.css';
-import 'photoswipe/dist/photoswipe.css';
 
-import { Item } from 'react-photoswipe-gallery';
+import { Component } from 'react';
 
-export const ImageGalleryItem = props => {
-  return (
-    <Item
-      original={props.image.largeImageURL}
-      thumbnail={props.image.webformatURL}
-      width="1024"
-      height="768"
-    >
-      {({ ref, open }) => (
-        <li className={css.ImageGalleryItem}>
+export default class ImageGalleryItem extends Component {
+  state = {
+    showModal: false,
+  };
+
+  togleModal = () => {
+    this.setState(prevState => ({ showModal: !prevState.showModal }));
+  };
+
+  render() {
+    const {
+      image: { webformatURL, tags, largeImageURL },
+    } = this.props;
+    const { showModal } = this.state;
+    return (
+      <>
+        <li className={css.ImageGalleryItem} onClick={this.togleModal}>
           <img
-            alt={props.image.tags}
+            alt={tags}
             className={css.ImageGalleryItemImage}
-            ref={ref}
-            onClick={open}
-            src={props.image.webformatURL}
+            src={webformatURL}
           />
         </li>
-      )}
-    </Item>
-  );
-};
+        <ModalCustom
+          modalIsOpen={showModal}
+          closeModal={this.togleModal}
+          tags={tags}
+          largeImageURL={largeImageURL}
+        />
+      </>
+    );
+  }
+}

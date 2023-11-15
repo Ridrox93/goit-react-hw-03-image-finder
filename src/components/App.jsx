@@ -1,51 +1,75 @@
 import { Component } from 'react';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Searchbar } from './Searchbar/Searchbar';
+import { getImages } from './service/service';
+import { Loader } from './Loader/Loader';
+import { Button } from './Button/Button';
+import { Error } from './Error/Error';
 
 export class App extends Component {
   state = {
-    searchPhoto: '',
-    isImagesLoading: false,
+    query: '',
+    loading: false,
     images: [],
-    showLoadMore: false,
+    loadMore: false,
+    error: null,
+    page: 1,
+    isEmpty: false,
   };
 
-  handleFormSubmit = newSearchPhoto => {
-    if (!newSearchPhoto) return;
-    if (newSearchPhoto === this.state.searchPhoto) return;
+  componentDidUpdate(_, prevState) {
+    const { query, page } = this.state;
+    if (prevState.query !== query || prevState.page !== page) {
+      this.getPhotos(query, page);
+    }
+  }
+
+  getPhotos = async (query, page) => {
+    try {
+      this.setState({ loading: true });
+      const { hits, totalHits } = await getImages(query, page);
+      if (hits.length === 0) {
+        this.setState({ isEmpty: true });
+      }
+      this.setState(prevState => ({
+        images: [...prevState.images, ...hits],
+        loadMore: this.state.page < Math.ceil(totalHits / 12),
+      }));
+    } catch (error) {
+      this.setState({ error });
+    } finally {
+      this.setState({ loading: false });
+    }
+  };
+
+  handleFormSubmit = value => {
+    if (value === this.state.query) return;
     this.setState({
-      searchPhoto: newSearchPhoto,
+      query: value,
       images: [],
-      showLoadMore: false,
+      page: 1,
+      isEmpty: false,
     });
   };
 
-  handleLoadingStatus = status => {
-    this.setState({ isImagesLoading: status });
-  };
-
-  handlImagesAdding = newImages => {
-    this.setState({ images: [...this.state.images, ...newImages] });
-  };
-
-  handlShowLoadMore = show => {
-    this.setState({ showLoadMore: show });
+  onLoadMore = () => {
+    this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
   render() {
+    const { images, loading, error, loadMore, isEmpty } = this.state;
+
     return (
-      <div>
+      <>
         <Searchbar onSubmit={this.handleFormSubmit} />
-        <ImageGallery
-          showLoadMore={this.state.showLoadMore}
-          handlShowLoadMore={this.handlShowLoadMore}
-          handlImagesAdding={this.handlImagesAdding}
-          images={this.state.images}
-          searchPhoto={this.state.searchPhoto}
-          onImagesLoad={this.handleLoadingStatus}
-          isImagesLoading={this.state.isImagesLoading}
-        />
-      </div>
+        {loading && <Loader />}
+        {error && <Error text="Something went wrong!" />}
+        {images.length !== 0 && <ImageGallery images={images} />}
+        {loadMore && !loading && images.length !== 0 && (
+          <Button onLoadMore={this.onLoadMore} />
+        )}
+        {isEmpty && <Error text="Not found!" />}
+      </>
     );
   }
 }

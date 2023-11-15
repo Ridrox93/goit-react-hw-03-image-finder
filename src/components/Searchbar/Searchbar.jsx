@@ -1,49 +1,56 @@
 import React, { Component } from 'react';
 import css from './Searcbar.module.css';
 import { FaSearch } from 'react-icons/fa';
+import { Error } from 'components/Error/Error';
 
 export class Searchbar extends Component {
   state = {
-    searchPhoto: '',
+    query: '',
+    isEmpty: false,
   };
 
   handleNameChange = event => {
     this.setState({
-      searchPhoto: event.currentTarget.value.toLowerCase(),
+      query: event.currentTarget.value.toLowerCase(),
     });
   };
 
   handleSubmit = event => {
     event.preventDefault();
 
-    if (this.state.searchPhoto.trim() === '') {
-      alert('Query something, please!');
+    if (this.state.query.trim() === '') {
+      this.setState({ isEmpty: true });
       return;
     }
-    this.props.onSubmit(this.state.searchPhoto);
-    this.setState({ searchPhoto: '' });
+    this.props.onSubmit(this.state.query);
+    this.setState({ query: '', isEmpty: false });
   };
 
   render() {
-    return (
-      <header className={css.searchbar}>
-        <form onSubmit={this.handleSubmit} className={css.searchForm}>
-          <button type="submit" className={css.searchFormButton}>
-            <FaSearch />
-          </button>
+    const { query, isEmpty } = this.state;
 
-          <input
-            name="searchPhoto"
-            className={css.searchFormInput}
-            type="text"
-            value={this.state.searchPhoto}
-            onChange={this.handleNameChange}
-            autoComplete="off"
-            autoFocus
-            placeholder="Search images and photos"
-          />
-        </form>
-      </header>
+    return (
+      <>
+        <header className={css.searchbar}>
+          <form onSubmit={this.handleSubmit} className={css.searchForm}>
+            <button type="submit" className={css.searchFormButton}>
+              <FaSearch />
+            </button>
+
+            <input
+              name="searchPhoto"
+              className={css.searchFormInput}
+              type="text"
+              value={query}
+              onChange={this.handleNameChange}
+              autoComplete="off"
+              autoFocus
+              placeholder="Search images and photos"
+            />
+          </form>
+        </header>
+        {isEmpty && <Error text="Query something!" />}
+      </>
     );
   }
 }
